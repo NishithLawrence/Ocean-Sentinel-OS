@@ -1,0 +1,1 @@
+export default function EmptyState({ title = 'Nothing to display', description = 'Content will appear here when available.' }) { return <div className="rounded-lg border border-dashed border-slate-300 p-8 text-center"><h3 className="font-medium">{title}</h3><p className="mt-1 text-sm text-slate-500">{description}</p></div> }

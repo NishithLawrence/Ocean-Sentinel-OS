@@ -1,0 +1,1 @@
+export default function SearchBar({ placeholder = 'Search', ...props }) { return <input type="search" placeholder={placeholder} className="rounded-md border border-slate-300 px-3 py-2 text-sm" {...props} /> }

@@ -1,0 +1,1 @@
+export default function Table({ columns = [], children }) { return <div className="overflow-x-auto rounded-lg border border-slate-200"><table className="w-full text-left text-sm"><thead className="bg-slate-50"><tr>{columns.map((column) => <th className="px-4 py-3 font-semibold" key={column}>{column}</th>)}</tr></thead><tbody>{children}</tbody></table></div> }

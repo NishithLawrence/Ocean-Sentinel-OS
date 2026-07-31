@@ -1,0 +1,1 @@
+export default function LoadingSpinner({ label = 'Loading' }) { return <div className="flex items-center gap-2 text-slate-600"><span className="size-4 animate-spin rounded-full border-2 border-slate-300 border-t-ocean-700" />{label}</div> }

@@ -1,0 +1,1 @@
+export default function MissionForm() { return <form className="space-y-3"><label className="block text-sm font-medium">Mission name<input disabled className="mt-1 block w-full rounded-md border border-slate-300 p-2" /></label></form> }

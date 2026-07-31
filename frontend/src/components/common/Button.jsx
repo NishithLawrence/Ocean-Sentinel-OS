@@ -1,0 +1,2 @@
+const styles = { primary: 'bg-ocean-700 text-white hover:bg-ocean-600', secondary: 'border border-slate-300 bg-white text-slate-700 hover:bg-slate-50', danger: 'bg-red-700 text-white hover:bg-red-600' }
+export default function Button({ variant = 'primary', className = '', ...props }) { return <button className={`rounded-md px-4 py-2 text-sm font-medium transition-colors focus:outline-none focus:ring-2 focus:ring-ocean-600 ${styles[variant]} ${className}`} {...props} /> }
