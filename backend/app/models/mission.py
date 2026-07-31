@@ -15,6 +15,7 @@ class Mission(Base):
     team_id: Mapped[int] = mapped_column(ForeignKey('teams.id'), nullable=False)
     created_by: Mapped[int] = mapped_column(ForeignKey('users.id'), nullable=False)
     mission_date: Mapped[date] = mapped_column(Date, index=True, nullable=False)
+    completed_date: Mapped[date | None] = mapped_column(Date, nullable=True)
     priority: Mapped[str] = mapped_column(String(50), nullable=False)
     resources: Mapped[str | None] = mapped_column(String(1000), nullable=True)
     notes: Mapped[str | None] = mapped_column(Text, nullable=True)
@@ -25,3 +26,19 @@ class Mission(Base):
     team: Mapped['Team'] = relationship(back_populates='missions')
     creator: Mapped['User'] = relationship(back_populates='missions_created')
     report: Mapped['Report | None'] = relationship(back_populates='mission', uselist=False)
+
+    @property
+    def title(self) -> str:
+        return self.mission_name
+
+    @property
+    def description(self) -> str:
+        return self.notes or ''
+
+    @property
+    def assigned_team(self) -> int:
+        return self.team_id
+
+    @property
+    def scheduled_date(self) -> date:
+        return self.mission_date
