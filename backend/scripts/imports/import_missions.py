@@ -81,39 +81,33 @@ def get_or_create_team(db, team_name: str, country: str, mission_type: str) -> T
     return team
 
 
-def get_or_create_reef(db, reef_name: str, lat_str: str, lon_str: str, country: str) -> Reef:
-    """Retrieve existing reef by name/coordinates or create a new reef record."""
-    rname = reef_name.strip() if reef_name else 'Unmapped Reef'
+def get_existing_reef(db, reef_name: str, lat_str: str, lon_str: str) -> Reef | None:
+    """Find matching existing reef by name or coordinate proximity. Never create synthetic reefs."""
+    rname = reef_name.strip() if reef_name else ''
     try:
         lat = float(lat_str)
         lon = float(lon_str)
     except (ValueError, TypeError):
-        lat, lon = 0.0, 0.0
+        lat, lon = None, None
 
-    reef = db.query(Reef).filter(
-        (Reef.reef_name == rname) |
-        ((Reef.latitude >= lat - 0.001) & (Reef.latitude <= lat + 0.001) &
-         (Reef.longitude >= lon - 0.001) & (Reef.longitude <= lon + 0.001))
-    ).first()
+    if rname:
+        reef = db.query(Reef).filter(
+            (Reef.reef_name == rname) |
+            (Reef.reef_name.ilike(f"%{rname}%"))
+        ).first()
+        if reef:
+            return reef
 
-    if not reef:
-        reef = Reef(
-            reef_name=rname,
-            country=country or 'Unspecified',
-            latitude=lat,
-            longitude=lon,
-            coral_health=50.0,
-            sea_temperature=25.0,
-            bleaching_alert=False,
-            protected_area=False,
-            ghost_net_distance=None,
-            ai_priority_score=None,
-            priority_level=None
-        )
-        db.add(reef)
-        db.flush()
-        logger.info(f"Created Reef record ID={reef.id} ({rname} at [{lat}, {lon}])")
-    return reef
+    if lat is not None and lon is not None:
+        reef = db.query(Reef).filter(
+            (Reef.latitude >= lat - 1.0) & (Reef.latitude <= lat + 1.0) &
+            (Reef.longitude >= lon - 1.0) & (Reef.longitude <= lon + 1.0)
+        ).first()
+        if reef:
+            return reef
+
+    return db.query(Reef).first()
+
 
 
 def import_missions(dataset_dir: Path) -> dict:
@@ -160,13 +154,16 @@ def import_missions(dataset_dir: Path) -> dict:
                     continue
 
                 end_date = parse_date(row.get('end_date'))
-                reef = get_or_create_reef(
+                reef = get_existing_reef(
                     db,
                     reef_name=row.get('reef_name', ''),
                     lat_str=row.get('latitude', '0'),
-                    lon_str=row.get('longitude', '0'),
-                    country=row.get('country', '')
+                    lon_str=row.get('longitude', '0')
                 )
+                if not reef:
+                    logger.warning(f"Row #{idx} ({m_name}) could not be matched to an existing reef, skipping.")
+                    skipped_count += 1
+                    continue
                 team = get_or_create_team(
                     db,
                     team_name=row.get('assigned_team', ''),

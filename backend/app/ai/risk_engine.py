@@ -12,11 +12,13 @@ def _risk_level(score: int) -> str:
 
 
 def assess_reef(reef) -> dict[str, object]:
-    """Assess recorded reef conditions using fixed, explainable thresholds."""
+    """Assess recorded reef conditions across all 5 environmental parameters using fixed, explainable thresholds."""
     risk_score = 0
     bleaching_score = 0
+    pollution_score = 0
     recommendations: list[str] = []
 
+    # 1. Coral Health Assessment
     if reef.coral_health <= 25:
         risk_score += 35
         bleaching_score += 35
@@ -29,6 +31,7 @@ def assess_reef(reef) -> dict[str, object]:
         risk_score += 10
         bleaching_score += 5
 
+    # 2. Sea Surface Temperature (SST) Thermal Stress Assessment
     if reef.sea_temperature >= 32:
         risk_score += 30
         bleaching_score += 40
@@ -41,12 +44,13 @@ def assess_reef(reef) -> dict[str, object]:
         risk_score += 10
         bleaching_score += 10
 
+    # 3. Bleaching Alert Assessment
     if reef.bleaching_alert:
         risk_score += 25
         bleaching_score += 25
-        recommendations.append('Validate the bleaching alert with a field assessment.')
+        recommendations.append('Validate the active bleaching alert with a field assessment.')
 
-    pollution_score = 0
+    # 4. Ghost Net Distance Assessment
     if reef.ghost_net_distance is not None:
         if reef.ghost_net_distance <= 1:
             risk_score += 25
@@ -61,10 +65,18 @@ def assess_reef(reef) -> dict[str, object]:
             pollution_score = 35
             recommendations.append('Monitor the reported ghost-net location.')
 
+    # 5. Protected Area Status Assessment
+    if reef.protected_area:
+        risk_score = max(0, risk_score - 5)
+        recommendations.append('Enforce active Marine Protected Area (MPA) conservation protocols.')
+    elif risk_score >= 50:
+        recommendations.append('Propose Marine Protected Area (MPA) designation for this high-risk reef.')
+
     risk_score = min(risk_score, 100)
     bleaching_score = min(bleaching_score, 100)
     if not recommendations:
         recommendations.append('Continue routine reef monitoring and scheduled condition surveys.')
+
     return {
         'reef_name': reef.reef_name,
         'overall_risk': _risk_level(risk_score),
@@ -74,3 +86,4 @@ def assess_reef(reef) -> dict[str, object]:
         'conservation_priority': _risk_level(risk_score),
         'recommendations': recommendations,
     }
+
