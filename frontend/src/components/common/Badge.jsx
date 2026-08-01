@@ -1,2 +1,2 @@
-const styles = { success: 'bg-emerald-100 text-emerald-800', warning: 'bg-amber-100 text-amber-800', danger: 'bg-red-100 text-red-800', info: 'bg-sky-100 text-sky-800' }
-export default function Badge({ variant = 'info', children }) { return <span className={`rounded-full px-2.5 py-1 text-xs font-medium ${styles[variant]}`}>{children}</span> }
+const styles = { success: 'border-emerald-300/25 bg-emerald-400/12 text-emerald-200', warning: 'border-amber-300/25 bg-amber-400/12 text-amber-100', danger: 'border-rose-300/25 bg-rose-400/12 text-rose-100', info: 'border-cyan-300/25 bg-cyan-400/12 text-cyan-100' }
+export default function Badge({ variant = 'info', children }) { return <span className={`inline-flex items-center rounded-full border px-2.5 py-1 text-[.68rem] font-bold uppercase tracking-wider ${styles[variant] ?? styles.info}`}>{children}</span> }

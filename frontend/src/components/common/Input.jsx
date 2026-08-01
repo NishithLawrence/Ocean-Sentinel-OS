@@ -1,0 +1,1 @@
+export default function Input({ label, hint, className = '', ...props }) { return <label className={`block text-sm font-medium text-slate-200 ${className}`}>{label && <span className="mb-2 block">{label}</span>}<input className="field" {...props} />{hint && <span className="mt-1 block text-xs text-slate-500">{hint}</span>}</label> }

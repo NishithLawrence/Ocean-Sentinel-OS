@@ -1,1 +1,2 @@
-export default function SearchBar({ placeholder = 'Search', ...props }) { return <input type="search" placeholder={placeholder} className="rounded-md border border-slate-300 px-3 py-2 text-sm" {...props} /> }
+import { Search } from 'lucide-react'
+export default function SearchBar({ placeholder = 'Search intelligence', ...props }) { return <label className="flex items-center gap-2 rounded-xl border border-cyan-100/12 bg-white/4 px-3 text-slate-400 focus-within:border-cyan-300/40"><Search size={16} /><input type="search" placeholder={placeholder} className="w-full bg-transparent py-2.5 text-sm outline-none placeholder:text-slate-500" {...props} /></label> }

@@ -1,2 +1,12 @@
-const styles = { primary: 'bg-ocean-700 text-white hover:bg-ocean-600', secondary: 'border border-slate-300 bg-white text-slate-700 hover:bg-slate-50', danger: 'bg-red-700 text-white hover:bg-red-600' }
-export default function Button({ variant = 'primary', className = '', ...props }) { return <button className={`rounded-md px-4 py-2 text-sm font-medium transition-colors focus:outline-none focus:ring-2 focus:ring-ocean-600 ${styles[variant]} ${className}`} {...props} /> }
+import { motion } from 'framer-motion'
+
+const styles = {
+  primary: 'bg-gradient-to-r from-cyan-400 to-emerald-400 text-slate-950 shadow-[0_10px_30px_rgba(34,211,238,.2)] hover:brightness-110',
+  secondary: 'border border-cyan-200/15 bg-white/5 text-cyan-50 hover:border-cyan-300/35 hover:bg-cyan-300/10',
+  danger: 'border border-rose-300/20 bg-rose-500/12 text-rose-100 hover:bg-rose-500/22',
+  ghost: 'text-slate-300 hover:bg-white/6 hover:text-white',
+}
+
+export default function Button({ variant = 'primary', className = '', children, ...props }) {
+  return <motion.button whileHover={{ y: -1 }} whileTap={{ scale: .98 }} className={`inline-flex items-center justify-center gap-2 rounded-xl px-4 py-2.5 text-sm font-semibold transition disabled:cursor-not-allowed disabled:opacity-50 ${styles[variant] ?? styles.primary} ${className}`} {...props}>{children}</motion.button>
+}

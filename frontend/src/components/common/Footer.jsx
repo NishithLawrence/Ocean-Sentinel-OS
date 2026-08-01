@@ -1,1 +1,1 @@
-export default function Footer() { return <footer className="border-t border-slate-200 bg-white px-6 py-4 text-sm text-slate-500">Ocean Sentinel OS</footer> }
+export default function Footer() { return <footer className="px-7 py-5 text-xs text-slate-600">© 2026 Ocean Sentinel OS <span className="mx-2 text-cyan-300/40">•</span> Government marine intelligence platform</footer> }

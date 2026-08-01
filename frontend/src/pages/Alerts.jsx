@@ -1,0 +1,9 @@
+import { useEffect, useState } from 'react'
+import { BellRing } from 'lucide-react'
+import Badge from '../components/common/Badge.jsx'
+import Card from '../components/common/Card.jsx'
+import EmptyState from '../components/common/EmptyState.jsx'
+import LoadingSpinner from '../components/common/LoadingSpinner.jsx'
+import { alertService } from '../services/alertService.js'
+const kind = (severity) => ({ Critical: 'danger', High: 'warning', Medium: 'info', Low: 'success' }[severity] ?? 'info')
+export default function Alerts() { const [alerts, setAlerts] = useState([]); const [loading, setLoading] = useState(true); useEffect(() => { alertService.getAll().then(({ data }) => setAlerts(data)).catch(() => setAlerts([])).finally(() => setLoading(false)) }, []); if (loading) return <LoadingSpinner label="Loading marine alerts" />; return <div className="space-y-6"><div><p className="eyebrow">Environmental signal stream</p><h1 className="page-title mt-1">Alerts</h1><p className="page-subtitle">Deterministic reef-risk signals from monitored waters.</p></div><Card title="Active intelligence" eyebrow={`${alerts.length} signals`}><div className="space-y-3">{alerts.length === 0 ? <EmptyState title="Waters are quiet" description="New assessment signals will appear here." /> : alerts.map((alert) => <article className="flex gap-4 rounded-2xl border border-cyan-100/10 bg-white/3 p-4" key={alert.id}><div className="grid size-10 shrink-0 place-items-center rounded-2xl bg-cyan-300/10 text-cyan-200"><BellRing size={18} /></div><div className="min-w-0 flex-1"><div className="flex flex-wrap items-center justify-between gap-2"><p className="font-medium text-white">{alert.reef_name}</p><Badge variant={kind(alert.severity)}>{alert.severity}</Badge></div><p className="mt-2 text-sm leading-6 text-slate-400">{alert.message}</p><p className="mt-3 text-xs text-slate-600">{new Date(alert.created_at).toLocaleString()}</p></div></article>)}</div></Card></div> }

@@ -1,2 +1,4 @@
+import { Compass } from 'lucide-react'
 import { Link } from 'react-router-dom'
-export default function NotFound() { return <main className="grid min-h-screen place-items-center p-6 text-center"><div><h1 className="text-3xl font-bold">Page not found</h1><Link className="mt-4 inline-block text-ocean-700 underline" to="/">Return to login</Link></div></main> }
+import Button from '../components/common/Button.jsx'
+export default function NotFound() { return <main className="grid min-h-screen place-items-center p-6 text-center"><div className="surface max-w-md rounded-[2rem] p-10"><div className="mx-auto grid size-16 place-items-center rounded-3xl bg-cyan-300/10 text-cyan-200"><Compass size={30} /></div><p className="eyebrow mt-6">Navigation signal lost</p><h1 className="mt-2 text-4xl font-semibold tracking-tight text-white">This route is off the chart.</h1><p className="mt-4 text-slate-400">Return to the Ocean Sentinel command center to continue your mission.</p><Link className="mt-7 inline-block" to="/dashboard"><Button>Return to command center</Button></Link></div></main> }
