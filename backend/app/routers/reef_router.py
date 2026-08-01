@@ -7,9 +7,9 @@ from sqlalchemy.orm import Session
 from app.auth.dependencies import get_current_user
 from app.database import get_db
 from app.models.user import User
-from app.routers._skeleton import not_implemented
 from app.schemas.reef import ReefCreate, ReefRead, ReefUpdate
-from app.services import reef_service
+from app.schemas.risk_assessment import RiskAssessmentRead
+from app.services import reef_service, risk_assessment_service
 
 router = APIRouter(prefix='/reefs', tags=['Reefs'])
 DatabaseSession = Annotated[Session, Depends(get_db)]
@@ -55,6 +55,9 @@ def delete_reef(reef_id: int, db: DatabaseSession, _: AuthenticatedUser) -> Resp
     return Response(status_code=status.HTTP_204_NO_CONTENT)
 
 
-@router.get('/{reef_id}/assessment')
-def get_assessment(reef_id: int, _: AuthenticatedUser):
-    not_implemented()
+@router.get('/{reef_id}/assessment', response_model=RiskAssessmentRead)
+def get_assessment(reef_id: int, db: DatabaseSession, _: AuthenticatedUser):
+    try:
+        return risk_assessment_service.create_assessment(db, reef_id)
+    except risk_assessment_service.AssessmentReefNotFoundError as error:
+        raise _not_found() from error
