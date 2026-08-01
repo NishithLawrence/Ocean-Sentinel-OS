@@ -24,5 +24,7 @@ Thumbs.db
 .vscode/
 .idea/
 
-# Local datasets
+# Datasets
 datasets/
+*.nc
+
