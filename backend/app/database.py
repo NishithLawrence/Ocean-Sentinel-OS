@@ -77,6 +77,10 @@ def initialize_database() -> None:
             db.add(officer_user)
 
         db.commit()
+
+        # Automatically import datasets into production database if empty
+        from app.services.seed_service import seed_database_if_empty
+        seed_database_if_empty(db)
     except Exception:
         db.rollback()
     finally:
