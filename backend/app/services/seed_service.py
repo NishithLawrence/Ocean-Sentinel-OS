@@ -112,6 +112,18 @@ def seed_database_if_empty(db: Session) -> None:
         except Exception as e:
             logger.warning(f"Auto-import Bleaching warning: {e}")
 
+        # Seed environmental alert signals for all reefs if alerts table is empty
+        try:
+            from app.models.alert import Alert
+            from app.services.risk_assessment_service import create_assessment
+            if db.query(Alert).first() is None:
+                for reef in db.query(Reef).all():
+                    create_assessment(db, reef.id)
+                db.commit()
+                logger.info("Successfully generated environmental risk alert signals.")
+        except Exception as e:
+            logger.warning(f"Auto-generate Alert signals warning: {e}")
+
         logger.info("Production dataset integration pipeline successfully completed.")
 
     except Exception as e:

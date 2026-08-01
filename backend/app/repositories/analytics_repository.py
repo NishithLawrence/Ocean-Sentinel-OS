@@ -11,8 +11,8 @@ def dashboard_metrics(db: Session) -> dict[str, int | float]:
     total_reefs = db.scalar(select(func.count(Reef.id))) or 0
     total_missions = db.scalar(select(func.count(Mission.id))) or 0
     total_teams = db.scalar(select(func.count(Team.id))) or 0
-    active_missions = db.scalar(select(func.count(Mission.id)).where(func.lower(Mission.status).in_(['planned', 'in_progress']))) or 0
-    available_teams = db.scalar(select(func.count(Team.id)).where(func.lower(Team.status) == 'available')) or 0
+    active_missions = db.scalar(select(func.count(Mission.id)).where(func.lower(Mission.status).in_(['planned', 'in progress', 'in_progress']))) or 0
+    available_teams = db.scalar(select(func.count(Team.id)).where(func.lower(Team.status).in_(['available', 'active']))) or 0
     average_coral_health = db.scalar(select(func.avg(Reef.coral_health))) or 0.0
     return {'total_reefs': total_reefs, 'total_missions': total_missions, 'total_teams': total_teams, 'active_missions': active_missions, 'available_teams': available_teams, 'average_coral_health': round(float(average_coral_health), 2)}
 

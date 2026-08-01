@@ -73,7 +73,7 @@ def get_or_create_team(db, team_name: str, country: str, mission_type: str) -> T
             contact_phone='+1-555-0199',
             region=country or 'Global',
             availability=True,
-            status='Active'
+            status='Available'
         )
         db.add(team)
         db.flush()
