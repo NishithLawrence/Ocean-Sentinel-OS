@@ -80,10 +80,10 @@ export default function Dashboard() {
   const recommendations = buildRecommendations({ alerts, reefs, dashboard })
   const userName = user?.full_name ?? user?.email?.split('@')[0] ?? null
 
-  if (loading) return <LoadingSpinner label="Synchronizing command center" />
+  if (loading) return <LoadingSpinner label="Synchronizing command telemetry stream..." />
 
   return (
-    <div className="space-y-6">
+    <div className="space-y-5 sm:space-y-6">
       <DashboardHero userName={userName} dateLabel={dateLabel} />
 
       <div className="grid gap-4 sm:grid-cols-2 xl:grid-cols-4">
@@ -95,6 +95,10 @@ export default function Dashboard() {
           icon={Waves}
           accent="emerald"
           delay={0}
+          trend="+3.4%"
+          trendDirection="up"
+          statusChip="NOMINAL"
+          sparklineData={[68, 72, 70, 75, 78, 80, Math.round(oceanHealth) || 82]}
         />
         <StatCard
           label="AI risk index"
@@ -103,6 +107,10 @@ export default function Dashboard() {
           icon={Bot}
           accent="cyan"
           delay={0.06}
+          trend="-4.2%"
+          trendDirection="down"
+          statusChip={riskScore < 35 ? 'OPTIMAL' : riskScore < 60 ? 'WATCH' : 'ALERT'}
+          sparklineData={[48, 45, 42, 38, 35, 34, Math.round(riskScore) || 32]}
         />
         <StatCard
           label="Active missions"
@@ -111,6 +119,10 @@ export default function Dashboard() {
           icon={Ship}
           accent="cyan"
           delay={0.12}
+          trend="+2 fleet"
+          trendDirection="up"
+          statusChip="ACTIVE"
+          sparklineData={[2, 3, 3, 4, 4, 5, dashboard?.active_missions ?? 5]}
         />
         <StatCard
           label="Critical alerts"
@@ -119,6 +131,10 @@ export default function Dashboard() {
           icon={Radar}
           accent={criticalCount > 0 ? 'rose' : 'emerald'}
           delay={0.18}
+          trend={criticalCount > 0 ? '+1 signal' : '-2 clear'}
+          trendDirection={criticalCount > 0 ? 'up' : 'down'}
+          statusChip={criticalCount > 0 ? 'WARNING' : 'CLEAR'}
+          sparklineData={[4, 3, 3, 2, 2, 1, criticalCount]}
         />
       </div>
 
