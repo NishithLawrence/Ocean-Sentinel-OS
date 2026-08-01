@@ -9,6 +9,8 @@ from pathlib import Path
 from sqlalchemy.orm import Session
 
 from app.models.reef import Reef
+from app.models.team import Team
+from app.models.mission import Mission
 
 logger = logging.getLogger('seed_service')
 
@@ -26,7 +28,6 @@ PRIMARY_REEFS = [
     {"reef_name": "Florida Keys", "country": "USA", "latitude": 24.55, "longitude": -81.78, "coral_health": 42.0},
 ]
 
-
 _is_seeding = False
 
 
@@ -37,9 +38,9 @@ def seed_database_if_empty(db: Session) -> None:
         return
     _is_seeding = True
     try:
-        # Seed base reef records if missing
-        existing_count = db.query(Reef).count()
-        if existing_count < len(PRIMARY_REEFS):
+        # 1. STEP ONE: Seed base reefs first
+        existing_reef_count = db.query(Reef).count()
+        if existing_reef_count < len(PRIMARY_REEFS):
             logger.info("Initializing primary reef telemetry sites for production database...")
             for r_data in PRIMARY_REEFS:
                 existing = db.query(Reef).filter(Reef.reef_name == r_data["reef_name"]).first()
@@ -57,31 +58,30 @@ def seed_database_if_empty(db: Session) -> None:
                     ))
             db.commit()
 
-        # Find dataset root directory
+        # Locate dataset root directory
         backend_dir = Path(__file__).resolve().parent.parent.parent
         datasets_dir = backend_dir.parent / 'datasets'
         if not datasets_dir.is_dir():
             datasets_dir = backend_dir / 'datasets'
 
         if not datasets_dir.is_dir():
-            logger.warning(f"Datasets directory not found at {datasets_dir}, skipping auto-import.")
-            return
+            err_msg = f"Datasets directory not found at {datasets_dir}"
+            logger.error(err_msg)
+            raise FileNotFoundError(err_msg)
 
         logger.info(f"Executing dataset integration pipeline from: {datasets_dir}")
 
-        # Run importers
-        try:
-            from scripts.imports.import_coral_reefs import import_coral_reefs
-            import_coral_reefs(datasets_dir / 'Coral_Reefs_Location')
-        except Exception as e:
-            logger.warning(f"Auto-import Coral Reefs warning: {e}")
+        # 2. STEP TWO: Import Coral Reefs dataset
+        from scripts.imports.import_coral_reefs import import_coral_reefs
+        import_coral_reefs(datasets_dir / 'Coral_Reefs_Location')
 
-        try:
-            from scripts.imports.import_missions import import_missions
-            import_missions(datasets_dir / 'missions')
-        except Exception as e:
-            logger.warning(f"Auto-import Missions warning: {e}")
+        # 3. STEP THREE: Import Teams & Missions dataset (FAIL LOUDLY IF FAIL)
+        from scripts.imports.import_missions import import_missions
+        import_missions(datasets_dir / 'missions', db=db)
+        if db.query(Mission).count() == 0:
+            raise RuntimeError(f"Mission import failed: 0 missions inserted from {datasets_dir / 'missions'}")
 
+        # 4. STEP FOUR: Import telemetry datasets (Weather, Protected Areas, Ghost Nets, SST, Bleaching)
         try:
             from scripts.imports.import_weather import import_weather
             import_weather(datasets_dir / 'weather')
@@ -112,7 +112,7 @@ def seed_database_if_empty(db: Session) -> None:
         except Exception as e:
             logger.warning(f"Auto-import Bleaching warning: {e}")
 
-        # Seed environmental alert signals for all reefs if alerts table is empty
+        # 5. STEP FIVE: Seed environmental alert signals
         try:
             from app.models.alert import Alert
             from app.services.risk_assessment_service import create_assessment
@@ -124,9 +124,22 @@ def seed_database_if_empty(db: Session) -> None:
         except Exception as e:
             logger.warning(f"Auto-generate Alert signals warning: {e}")
 
+        # Required startup logging format
+        reefs_cnt = db.query(Reef).count()
+        teams_cnt = db.query(Team).count()
+        missions_cnt = db.query(Mission).count()
+
+        print(f"[SEED] Reefs imported: {reefs_cnt}")
+        print(f"[SEED] Teams imported: {teams_cnt}")
+        print(f"[SEED] Missions imported: {missions_cnt}")
+
+        logger.info(f"[SEED] Reefs imported: {reefs_cnt}")
+        logger.info(f"[SEED] Teams imported: {teams_cnt}")
+        logger.info(f"[SEED] Missions imported: {missions_cnt}")
         logger.info("Production dataset integration pipeline successfully completed.")
 
     except Exception as e:
         logger.error(f"Error during production dataset seeding: {e}")
+        raise
     finally:
         _is_seeding = False

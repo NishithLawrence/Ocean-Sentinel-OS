@@ -110,7 +110,7 @@ def get_existing_reef(db, reef_name: str, lat_str: str, lon_str: str) -> Reef | 
 
 
 
-def import_missions(dataset_dir: Path) -> dict:
+def import_missions(dataset_dir: Path, db=None) -> dict:
     """Import missions CSV dataset into the database."""
     initialize_database()
 
@@ -120,11 +120,15 @@ def import_missions(dataset_dir: Path) -> dict:
         csv_path = dataset_dir if dataset_dir.is_file() else dataset_dir / 'missions' / 'sample_missions.csv'
 
     if not csv_path.is_file():
-        logger.error(f"Missions CSV file not found at {csv_path}")
-        return {'discovered': 0, 'imported': 0, 'updated': 0, 'skipped': 0}
+        err_msg = f"Missions CSV file not found at {csv_path}"
+        logger.error(err_msg)
+        raise FileNotFoundError(err_msg)
 
     logger.info(f"Loading missions CSV from: {csv_path}")
-    db = SessionLocal()
+    close_session = False
+    if db is None:
+        db = SessionLocal()
+        close_session = True
 
     discovered_count = 0
     imported_count = 0
@@ -218,7 +222,8 @@ def import_missions(dataset_dir: Path) -> dict:
         logger.error(f"Error during mission import execution: {e}")
         raise
     finally:
-        db.close()
+        if close_session:
+            db.close()
 
     results = {
         'discovered': discovered_count,
