@@ -33,3 +33,15 @@ def initialize_database() -> None:
         if 'completed_date' not in mission_columns:
             with engine.begin() as connection:
                 connection.execute(text('ALTER TABLE missions ADD COLUMN completed_date DATE'))
+    if engine.dialect.name == 'sqlite' and 'teams' in inspect(engine).get_table_names():
+        team_columns = {column['name'] for column in inspect(engine).get_columns('teams')}
+        additions = {
+            'leader_name': "TEXT NOT NULL DEFAULT ''",
+            'member_count': 'INTEGER NOT NULL DEFAULT 0',
+            'contact_email': "TEXT NOT NULL DEFAULT ''",
+            'contact_phone': "TEXT NOT NULL DEFAULT ''",
+        }
+        with engine.begin() as connection:
+            for column_name, column_type in additions.items():
+                if column_name not in team_columns:
+                    connection.execute(text(f'ALTER TABLE teams ADD COLUMN {column_name} {column_type}'))
