@@ -1,23 +1,18 @@
 # 🌊 Ocean Sentinel OS
 
-> **Ocean Sentinel OS** is a full-stack AI-powered marine conservation platform designed to monitor coral reef ecosystems, manage conservation missions, coordinate field teams, generate analytical reports, and assess reef health using a deterministic AI risk engine.
+> **Ocean Sentinel OS** is an AI-Assisted Marine Operations Platform that transforms environmental telemetry into actionable conservation decisions through explainable AI, intelligent mission planning, and real-time operational coordination.
 
 ---
 
-## 📌 Project Overview
+# 📌 Project Overview
 
-Coral reefs are among the world's most valuable ecosystems but face increasing threats from coral bleaching, marine debris, rising sea temperatures, and human activities.
+Coral reefs are among the world's most valuable ecosystems but face increasing threats from coral bleaching, rising sea temperatures, marine debris, and human activities.
 
-Ocean Sentinel OS provides conservation organizations with a centralized platform to:
+Ocean Sentinel OS bridges the gap between environmental monitoring and field operations by combining environmental telemetry, explainable AI, mission planning, team coordination, analytics, and reporting into a single intelligent platform.
 
-- Monitor reef conditions
-- Plan conservation missions
-- Manage field teams
-- Generate analytical reports
-- Perform AI-powered reef risk assessments
-- Track conservation alerts
+Instead of simply displaying reef statistics, the platform analyzes reef conditions, explains ecological risks, recommends conservation missions, suggests the most appropriate response team, and enables operators to deploy missions with a single click.
 
-The platform combines geospatial reef information, mission management, analytics, reporting, and explainable AI into a single dashboard.
+The platform follows a **Human-in-the-Loop** approach where AI provides transparent recommendations while conservation officers retain complete operational control.
 
 ---
 
@@ -34,24 +29,85 @@ The platform combines geospatial reef information, mission management, analytics
 
 ## 🪸 Reef Management
 
-- Create Reef
-- Update Reef
-- Delete Reef
-- View Reef Details
+- Create, Update & Delete Reefs
+- Interactive Marine Map
+- Reef Details Dashboard
 - Coral Health Monitoring
-- Bleaching Alerts
+- Sea Surface Temperature Monitoring
+- Bleaching Alert Tracking
+- Ghost Net Distance Monitoring
 - Protected Area Tracking
-- Ghost Net Distance Tracking
+
+---
+
+## 🤖 AI-Assisted Decision Support
+
+Ocean Sentinel OS analyzes environmental telemetry to generate intelligent operational recommendations.
+
+The AI evaluates:
+
+- Coral Health
+- Sea Surface Temperature
+- Bleaching Alerts
+- Ghost Net Distance
+- Protected Area Status
+
+AI outputs include:
+
+- Overall Risk Score
+- Conservation Priority
+- Bleaching Risk
+- Pollution Risk
+- Explainable Risk Contributors
+- AI Confidence Score
+- Human-readable Ecological Explanation
+- Recommended Mission Type
+- Suggested Response Team
+- Estimated Mission Duration
+- Expected Conservation Outcome
+
+---
+
+## 🧠 Explainable AI
+
+Unlike traditional AI systems, Ocean Sentinel OS explains every recommendation.
+
+The AI displays:
+
+- Coral Health contribution
+- Sea Temperature contribution
+- Ghost Net contribution
+- Protected Area impact
+
+This enables conservation teams to understand **why** a recommendation was generated before taking action.
+
+---
+
+## 🚀 AI-Assisted Mission Planning
+
+After analyzing a reef, Ocean Sentinel OS automatically recommends:
+
+- Mission Type
+- Mission Priority
+- Suggested Response Team
+- Estimated Duration
+- Expected Operational Outcome
+
+Operators can review the recommendation and deploy the mission directly from the dashboard with a single click.
 
 ---
 
 ## 🚢 Mission Management
 
+- AI-Prefilled Mission Creation
 - Mission Planning
 - Team Assignment
 - Mission Priority
-- Mission Status
+- Mission Status Tracking
 - Schedule Management
+- Mission Timeline
+- Reef-specific Mission History
+- Live Dashboard Synchronization
 
 ---
 
@@ -62,24 +118,23 @@ The platform combines geospatial reef information, mission management, analytics
 - Team Status
 - Member Count
 - Contact Information
+- AI Team Recommendation
 
 ---
 
 ## 📊 Analytics Dashboard
 
+Monitor conservation operations through a centralized dashboard featuring:
+
 - Total Reefs
-- Total Missions
-- Total Teams
 - Active Missions
 - Available Teams
 - Average Coral Health
-
-Charts
-
-- Mission Status
+- Mission Status Distribution
 - Coral Health Distribution
 - Team Specialization
 - Reefs by Country
+- Operational Overview
 
 ---
 
@@ -93,63 +148,73 @@ Generate professional PDF reports containing:
 - Coral Health
 - Mission Status
 - Executive Summary
-
----
-
-## 🤖 AI Risk Engine
-
-A deterministic AI engine evaluates reef conditions using:
-
-- Coral Health
-- Sea Temperature
-- Bleaching Alerts
-- Ghost Net Distance
-
-Outputs include:
-
-- Risk Score
-- Overall Risk
-- Bleaching Risk
-- Pollution Risk
-- Conservation Priority
-- Conservation Recommendations
+- AI Assessment Summary
 
 ---
 
 ## 🚨 Alerts
 
-Automatically stores reef risk assessments as alerts for future review.
+Automatically generates and stores reef conservation alerts for future review and operational planning.
+
+---
+
+# 🔄 AI Conservation Workflow
+
+```text
+Select Reef
+      │
+      ▼
+Analyze Environmental Telemetry
+      │
+      ▼
+AI Risk Assessment
+      │
+      ▼
+Explainable AI Analysis
+      │
+      ▼
+Operational Recommendation
+      │
+      ▼
+Deploy Mission
+      │
+      ▼
+Dashboard Updates Instantly
+```
 
 ---
 
 # 🏗 System Architecture
 
-```
-                React Frontend
-                      │
-                      │ REST API
-                      ▼
-               FastAPI Backend
-                      │
-      ┌───────────────┼───────────────┐
-      │               │               │
-      ▼               ▼               ▼
- SQLite Database  AI Risk Engine  Report Engine
+```text
+                    React Frontend
+                           │
+                           │ REST API
+                           ▼
+                  FastAPI Backend
+                           │
+        ┌──────────────────┼──────────────────┐
+        │                  │                  │
+        ▼                  ▼                  ▼
+ SQLite Database   AI Recommendation     PDF Reports
+                  & Explainability
 ```
 
 ---
 
 # 🛠 Tech Stack
 
-### Frontend
+## Frontend
 
 - React
 - Vite
+- Tailwind CSS
 - React Router
 - Axios
 - Recharts
+- Leaflet
 
-### Backend
+## Backend
 
 - FastAPI
 - SQLAlchemy
@@ -158,11 +223,14 @@ Automatically stores reef risk assessments as alerts for future review.
 - JWT Authentication
 - ReportLab
 
-### AI
+## AI
 
-- Deterministic Rule Engine
+- Deterministic AI Risk Engine
+- Explainable AI
+- Mission Recommendation Engine
+- Operational Decision Support
 
-### Tools
+## Tools
 
 - Git
 - GitHub
@@ -172,8 +240,8 @@ Automatically stores reef risk assessments as alerts for future review.
 
 # 📂 Project Structure
 
-```
-Ocean_os/
+```text
+Ocean-Sentinel-OS/
 
 ├── backend/
 │   ├── app/
@@ -207,8 +275,11 @@ Ocean_os/
 
 ```bash
 git clone https://github.com/NishithLawrence/Ocean-Sentinel-OS.git
+
 cd Ocean-Sentinel-OS
 ```
+
+---
 
 ## Backend
 
@@ -225,13 +296,13 @@ pip install -r requirements.txt
 uvicorn app.main:app --reload
 ```
 
-Backend:
+Backend
 
 ```
 http://127.0.0.1:8000
 ```
 
-Swagger:
+Swagger
 
 ```
 http://127.0.0.1:8000/docs
@@ -249,7 +320,7 @@ npm install
 npm run dev
 ```
 
-Frontend:
+Frontend
 
 ```
 http://localhost:5173
@@ -271,6 +342,12 @@ ALGORITHM=HS256
 ACCESS_TOKEN_EXPIRE_MINUTES=60
 ```
 
+Frontend `.env`
+
+```env
+VITE_API_BASE_URL=https://ocean-sentinel-api.onrender.com/api/v1
+```
+
 ---
 
 # 📡 API Modules
@@ -289,29 +366,56 @@ ACCESS_TOKEN_EXPIRE_MINUTES=60
 
 # 📸 Screenshots
 
-> Screenshots will be added after deployment.
-
 - Login
 - Dashboard
-- Reef Management
-- Mission Planner
-- Team Management
-- Analytics
-- Reports
-- AI Assessment
+- Interactive Marine Map
+- AI Conservation Recommendation
+- Explainable AI
+- Mission Deployment
+- Mission Timeline
+- Analytics Dashboard
+- PDF Reports
+
+---
+
+# 🎯 Problem Statement
+
+Marine conservation teams often collect vast amounts of environmental data but still rely on manual interpretation to decide where to deploy limited field resources.
+
+Traditional dashboards visualize reef conditions but do not assist responders in determining:
+
+- Which reef needs immediate attention?
+- Why is the reef at risk?
+- What mission should be deployed?
+- Which response team is best suited?
+
+Ocean Sentinel OS bridges this gap through AI-assisted operational decision support.
+
+---
+
+# 💡 Solution
+
+Ocean Sentinel OS converts raw environmental telemetry into actionable conservation operations by:
+
+- Assessing ecological risk
+- Explaining AI reasoning
+- Recommending conservation missions
+- Suggesting response teams
+- Supporting human decision-making
+- Synchronizing operational dashboards in real time
 
 ---
 
 # 🔮 Future Enhancements
 
-- Real-time NOAA integration
-- Allen Coral Atlas dataset import
-- Marine Protected Area integration
-- Weather API integration
-- Drone image analysis
-- Interactive GIS maps
-- Predictive ML models
-- Cloud deployment
+- NOAA Weather API Integration
+- Allen Coral Atlas Integration
+- Satellite Image Analysis
+- Drone-assisted Reef Inspection
+- IoT Marine Sensor Integration
+- Predictive Coral Bleaching Models
+- AI-generated Conservation Reports
+- Multi-region Deployment
 
 ---
 
@@ -319,11 +423,10 @@ ACCESS_TOKEN_EXPIRE_MINUTES=60
 
 **Nishith Lawrence**
 
-B.Tech Student
+B.Tech Student | AI & Full Stack Developer
 
-AI & Full Stack Developer
-
-GitHub: https://github.com/NishithLawrence
+GitHub:
+https://github.com/NishithLawrence
 
 ---
 
