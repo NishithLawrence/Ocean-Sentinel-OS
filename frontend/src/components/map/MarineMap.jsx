@@ -32,7 +32,7 @@ function reefIcon(health) {
   })
 }
 
-export default function MarineMap({ reefs = [], height = 'h-80' }) {
+export default function MarineMap({ reefs = [], height = 'h-80', onSelectReef, selectedReefId }) {
   const validReefs = reefs.filter((r) => r.latitude != null && r.longitude != null)
 
   if (validReefs.length === 0) {
@@ -55,15 +55,35 @@ export default function MarineMap({ reefs = [], height = 'h-80' }) {
         />
         <FitBounds reefs={validReefs} />
         {validReefs.map((reef) => (
-          <Marker key={reef.id} position={[reef.latitude, reef.longitude]} icon={reefIcon(reef.coral_health ?? 50)}>
+          <Marker
+            key={reef.id}
+            position={[reef.latitude, reef.longitude]}
+            icon={reefIcon(reef.coral_health ?? 50)}
+            eventHandlers={{
+              click: () => {
+                if (onSelectReef) onSelectReef(reef)
+              },
+            }}
+          >
             <Popup>
               <div className="min-w-40 text-sm">
                 <p className="font-semibold text-slate-900">{reef.reef_name}</p>
                 <p className="text-slate-600">{reef.country}</p>
                 <p className="mt-1 text-slate-700">Health: {reef.coral_health}%</p>
-                <Link to={`/reef/${reef.id}`} className="mt-2 inline-block text-cyan-700 underline">
-                  View reef
-                </Link>
+                <div className="mt-2 flex flex-col gap-1">
+                  {onSelectReef && (
+                    <button
+                      type="button"
+                      onClick={() => onSelectReef(reef)}
+                      className="text-left font-medium text-cyan-700 hover:underline"
+                    >
+                      Select Reef AI Assessment
+                    </button>
+                  )}
+                  <Link to={`/reef/${reef.id}`} className="text-slate-600 underline">
+                    View full details
+                  </Link>
+                </div>
               </div>
             </Popup>
           </Marker>
@@ -72,3 +92,4 @@ export default function MarineMap({ reefs = [], height = 'h-80' }) {
     </div>
   )
 }
+

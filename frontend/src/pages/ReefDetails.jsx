@@ -6,7 +6,7 @@ import Card from '../components/common/Card.jsx'
 import EmptyState from '../components/common/EmptyState.jsx'
 import LoadingSpinner from '../components/common/LoadingSpinner.jsx'
 import Table from '../components/common/Table.jsx'
-import ReefAssessment from '../components/map/ReefAssessment.jsx'
+import AiConservationRecommendation from '../components/dashboard/AiConservationRecommendation.jsx'
 import { reefService } from '../services/reefService.js'
 
 const emptyForm = { reef_name: '', country: '', latitude: '', longitude: '', coral_health: '', sea_temperature: '', bleaching_alert: false, protected_area: false, ghost_net_distance: '' }
@@ -32,5 +32,6 @@ export default function ReefDetails() {
   if (!reef) return <EmptyState title="Reef not found" description="The requested reef may have been deleted." />
   const formValues = { reef_name: reef.reef_name, country: reef.country, latitude: String(reef.latitude), longitude: String(reef.longitude), coral_health: String(reef.coral_health), sea_temperature: String(reef.sea_temperature), bleaching_alert: reef.bleaching_alert, protected_area: reef.protected_area, ghost_net_distance: reef.ghost_net_distance ?? '' }
   const details = [['Country', reef.country], ['Coordinates', `${reef.latitude}, ${reef.longitude}`], ['Coral health', `${reef.coral_health}%`], ['Sea temperature', `${reef.sea_temperature}°C`], ['Bleaching alert', reef.bleaching_alert ? 'Yes' : 'No'], ['Protected area', reef.protected_area ? 'Yes' : 'No'], ['Ghost net distance', reef.ghost_net_distance ?? 'Not recorded']]
-  return <div className="space-y-6"><div className="flex flex-wrap items-center justify-between gap-3"><div><Link className="text-sm text-ocean-700 underline" to="/reefs">Back to reefs</Link><h1 className="mt-2 text-2xl font-bold">{reef.reef_name}</h1></div><div className="flex gap-2"><Button variant="secondary" onClick={() => setEditing((value) => !value)}>{editing ? 'Cancel' : 'Edit'}</Button><Button variant="danger" onClick={remove}>Delete</Button></div></div>{editing ? <ReefForm initialValues={formValues} onSubmit={save} submitting={submitting} title="Edit reef" /> : <><Card title="Reef information"><dl className="grid gap-4 sm:grid-cols-2">{details.map(([label, value]) => <div key={label}><dt className="text-sm text-slate-500">{label}</dt><dd className="font-medium">{value}</dd></div>)}</dl></Card><ReefAssessment reefId={reef.id} /></>}</div>
+  return <div className="space-y-6"><div className="flex flex-wrap items-center justify-between gap-3"><div><Link className="text-sm text-ocean-700 underline" to="/reefs">Back to reefs</Link><h1 className="mt-2 text-2xl font-bold">{reef.reef_name}</h1></div><div className="flex gap-2"><Button variant="secondary" onClick={() => setEditing((value) => !value)}>{editing ? 'Cancel' : 'Edit'}</Button><Button variant="danger" onClick={remove}>Delete</Button></div></div>{editing ? <ReefForm initialValues={formValues} onSubmit={save} submitting={submitting} title="Edit reef" /> : <><Card title="Reef information"><dl className="grid gap-4 sm:grid-cols-2">{details.map(([label, value]) => <div key={label}><dt className="text-sm text-slate-500">{label}</dt><dd className="font-medium">{value}</dd></div>)}</dl></Card><AiConservationRecommendation reef={reef} /></>}</div>
 }
+

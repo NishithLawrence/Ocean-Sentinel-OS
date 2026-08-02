@@ -42,7 +42,17 @@ export default function MissionPlanner() {
     setLoading(true)
     try { setMissions((await missionService.getAll()).data) } catch (error) { toast.error(messageFor(error)) } finally { setLoading(false) }
   }
-  useEffect(() => { loadMissions() }, [])
+  useEffect(() => {
+    loadMissions()
+    const handleMissionCreated = () => {
+      loadMissions()
+    }
+    window.addEventListener('ocean-sentinel:mission-created', handleMissionCreated)
+    return () => {
+      window.removeEventListener('ocean-sentinel:mission-created', handleMissionCreated)
+    }
+  }, [])
+
 
   const save = async (payload) => {
     setSubmitting(true)

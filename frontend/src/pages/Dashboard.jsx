@@ -16,6 +16,7 @@ import MissionTimeline from '../components/dashboard/MissionTimeline.jsx'
 import AiRecommendations from '../components/dashboard/AiRecommendations.jsx'
 import QuickActions from '../components/dashboard/QuickActions.jsx'
 import MissionStatusChart from '../components/dashboard/MissionStatusChart.jsx'
+import AiConservationRecommendation from '../components/dashboard/AiConservationRecommendation.jsx'
 import {
   buildHealthChart,
   buildRecommendations,
@@ -37,30 +38,50 @@ export default function Dashboard() {
   const [reefs, setReefs] = useState([])
   const [missionStatus, setMissionStatus] = useState([])
   const [coralHealth, setCoralHealth] = useState([])
+  const [selectedReef, setSelectedReef] = useState(null)
+
+  const load = async () => {
+    try {
+      const [dashRes, alertsRes, missionsRes, reefsRes, statusRes, healthRes] = await Promise.all([
+        analyticsService.getDashboard().catch(() => ({ data: null })),
+        alertService.getAll().catch(() => ({ data: [] })),
+        missionService.getAll().catch(() => ({ data: [] })),
+        reefService.getAll().catch(() => ({ data: [] })),
+        analyticsService.getMissionStatus().catch(() => ({ data: [] })),
+        analyticsService.getCoralHealth().catch(() => ({ data: [] })),
+      ])
+      setDashboard(dashRes.data)
+      setAlerts(alertsRes.data ?? [])
+      setMissions(missionsRes.data ?? [])
+      const loadedReefs = reefsRes.data ?? []
+      setReefs(loadedReefs)
+      setMissionStatus(statusRes.data ?? [])
+      setCoralHealth(healthRes.data ?? [])
+
+      setSelectedReef((current) => {
+        if (current) {
+          const updated = loadedReefs.find((r) => r.id === current.id)
+          return updated || current
+        }
+        return loadedReefs[0] || null
+      })
+    } finally {
+      setLoading(false)
+    }
+  }
 
   useEffect(() => {
-    const load = async () => {
-      try {
-        const [dashRes, alertsRes, missionsRes, reefsRes, statusRes, healthRes] = await Promise.all([
-          analyticsService.getDashboard().catch(() => ({ data: null })),
-          alertService.getAll().catch(() => ({ data: [] })),
-          missionService.getAll().catch(() => ({ data: [] })),
-          reefService.getAll().catch(() => ({ data: [] })),
-          analyticsService.getMissionStatus().catch(() => ({ data: [] })),
-          analyticsService.getCoralHealth().catch(() => ({ data: [] })),
-        ])
-        setDashboard(dashRes.data)
-        setAlerts(alertsRes.data ?? [])
-        setMissions(missionsRes.data ?? [])
-        setReefs(reefsRes.data ?? [])
-        setMissionStatus(statusRes.data ?? [])
-        setCoralHealth(healthRes.data ?? [])
-      } finally {
-        setLoading(false)
-      }
-    }
     load()
+
+    const handleMissionCreated = () => {
+      load()
+    }
+    window.addEventListener('ocean-sentinel:mission-created', handleMissionCreated)
+    return () => {
+      window.removeEventListener('ocean-sentinel:mission-created', handleMissionCreated)
+    }
   }, [])
+
 
   const dateLabel = useMemo(
     () =>
@@ -152,8 +173,11 @@ export default function Dashboard() {
           </Link>
         }
       >
-        <MarineMap reefs={reefs} height="h-[420px]" />
+        <MarineMap reefs={reefs} height="h-[420px]" onSelectReef={(r) => setSelectedReef(r)} selectedReefId={selectedReef?.id} />
       </Card>
+
+      <AiConservationRecommendation reef={selectedReef} onMissionDeployed={load} />
+
 
       <div className="grid gap-6 xl:grid-cols-[1.2fr_.8fr]">
         <LiveReefMonitoring reefs={reefs} />

@@ -27,9 +27,18 @@ export default function Login() {
       setSession({ accessToken: data.access_token, user: data.user ?? null })
       navigate('/dashboard', { replace: true })
     } catch (requestError) {
+      console.error(requestError)
+      console.error(requestError.response)
+      console.error(requestError.response?.data)
       const detail = requestError.response?.data?.detail
-      setError(typeof detail === 'string' ? detail : 'Secure sign-in could not be completed.')
+      const errorMessage = typeof detail === 'string'
+        ? detail
+        : Array.isArray(detail)
+          ? detail[0]?.msg ?? 'Validation error.'
+          : requestError.message || 'Secure sign-in could not be completed.'
+      setError(errorMessage)
     } finally {
+
       setLoading(false)
     }
   }
